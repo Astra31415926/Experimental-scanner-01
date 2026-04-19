@@ -8,34 +8,16 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0a0a0a;
-            --surface: #141414;
-            --border: #333;
-            --text: #e0e0e0;
-            --red: #FF004D;
-            --green: #00FF41;
-            --blue: #0088FF;
+            --bg: #0a0a0a; --surface: #141414; --border: #333; --text: #e0e0e0;
+            --red: #FF004D; --green: #00FF41; --blue: #0088FF;
         }
 
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
         /* Header & Tabs */
         .header-container { background: #000; border-bottom: 1px solid var(--border); flex-shrink: 0; }
         .tabs { display: flex; }
-        .tab {
-            flex: 1; padding: 15px; text-align: center; font-weight: 600; cursor: pointer;
-            opacity: 0.4; border-bottom: 3px solid transparent; transition: all 0.2s;
-            font-family: 'JetBrains Mono', monospace;
-        }
+        .tab { flex: 1; padding: 15px; text-align: center; font-weight: 600; cursor: pointer; opacity: 0.4; border-bottom: 3px solid transparent; transition: all 0.2s; font-family: 'JetBrains Mono', monospace; }
         .tab.active { opacity: 1; border-bottom-color: var(--text); }
         .tab.r.active { border-bottom-color: var(--red); color: var(--red); }
         .tab.g.active { border-bottom-color: var(--green); color: var(--green); }
@@ -44,55 +26,46 @@
         /* LED Bar */
         .led-bar { display: flex; justify-content: center; gap: 30px; padding: 10px; background: #111; }
         .led-item { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: bold; color: #555; }
-        .led-circle { width: 12px; height: 12px; border-radius: 50%; background-color: #222; transition: all 0.1s; }
-        .led-item.r.active .led-circle { background-color: var(--red); box-shadow: 0 0 10px var(--red); }
+        .led-circle { width: 12px; height: 12px; border-radius: 50%; background-color: #222; transition: all 0.1s; box-shadow: none; }
+        .led-item.r.active .led-circle { background-color: var(--red); box-shadow: 0 0 15px var(--red); }
         .led-item.r.active { color: var(--red); }
-        .led-item.g.active .led-circle { background-color: var(--green); box-shadow: 0 0 10px var(--green); }
+        .led-item.g.active .led-circle { background-color: var(--green); box-shadow: 0 0 15px var(--green); }
         .led-item.g.active { color: var(--green); }
-        .led-item.b.active .led-circle { background-color: var(--blue); box-shadow: 0 0 10px var(--blue); }
+        .led-item.b.active .led-circle { background-color: var(--blue); box-shadow: 0 0 15px var(--blue); }
         .led-item.b.active { color: var(--blue); }
 
         /* Main Content */
         .main-container { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding-bottom: 20px; }
 
         /* Canvas Area */
-        .canvas-wrapper {
-            position: relative; width: 100%; background: #000;
-            display: flex; justify-content: center; align-items: center; height: 250px;
-            border-bottom: 1px solid var(--border);
-        }
-        #canvas-display { max-width: 100%; max-height: 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .canvas-wrapper { position: relative; width: 100%; background: #000; display: flex; justify-content: center; align-items: center; height: 250px; border-bottom: 1px solid var(--border); }
+        #canvas-display { max-width: 100%; max-height: 100%; }
         #video-source { display: none; }
 
         /* Controls */
-        .controls-panel {
-            padding: 15px; background: var(--surface); border-radius: 12px;
-            margin: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
+        .controls-panel { padding: 15px; background: var(--surface); border-radius: 12px; margin: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
         .slider-group { margin-bottom: 15px; }
         .slider-header { display: flex; justify-content: space-between; margin-bottom: 2px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
-        .slider-val { color: var(--text); background: #222; padding: 1px 6px; border-radius: 4px; }
+        .slider-val { color: var(--text); background: #222; padding: 1px 6px; border-radius: 4px; min-width: 40px; text-align: center;}
         .range-metrics { font-size: 10px; color: #888; margin-top: 2px; margin-bottom: 5px; font-family: 'JetBrains Mono', monospace; height: 12px; }
         .range-metrics span { color: var(--green); font-weight: bold; }
         .range-metrics em { color: #555; font-style: normal; }
 
-        input[type=range] { width: 100%; background: transparent; -webkit-appearance: none; }
+        input[type=range] { width: 100%; background: transparent; -webkit-appearance: none; pointer-events: none; /* Disable manual drag visually if auto runs */ }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #333; border-radius: 2px; }
-        input[type=range]::-webkit-slider-thumb { height: 16px; width: 16px; border-radius: 50%; background: var(--text); -webkit-appearance: none; margin-top: -6px; cursor: pointer; }
+        input[type=range]::-webkit-slider-thumb { height: 16px; width: 16px; border-radius: 50%; background: var(--text); -webkit-appearance: none; margin-top: -6px; cursor: pointer; pointer-events: auto; }
         .tab.r input[type=range]::-webkit-slider-thumb { background: var(--red); }
         .tab.g input[type=range]::-webkit-slider-thumb { background: var(--green); }
         .tab.b input[type=range]::-webkit-slider-thumb { background: var(--blue); }
 
         /* Buttons */
         .btn-group { display: flex; gap: 10px; padding: 0 15px; margin-top: 15px; }
-        .btn {
-            padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
-            border: 1px solid transparent; text-align: center; transition: all 0.2s;
-        }
+        .btn { padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; border: 1px solid transparent; text-align: center; transition: all 0.2s; }
         .btn-start { flex: 2; background: #fff; color: #000; border: none; }
         .btn-load { flex: 2; background: transparent; color: #fff; border: 1px solid #fff; }
-        .btn-auto { flex: 1; background: transparent; color: #888; border: 1px solid #444; }
-        .btn-auto.active { color: var(--green); border-color: var(--green); box-shadow: 0 0 8px rgba(0, 255, 65, 0.2); }
+        .btn-auto { flex: 1; background: transparent; color: #888; border: 1px solid #444; position: relative; overflow: hidden; }
+        .btn-auto.active { color: var(--green); border-color: var(--green); box-shadow: 0 0 10px rgba(0, 255, 65, 0.2); }
+        .btn-auto.locked { color: #fff; border-color: #fff; background: rgba(255,255,255,0.1); }
         .btn-reset-ranges { flex: 1; background: transparent; color: var(--red); border: 1px solid var(--red); font-size: 11px; }
         #file-input { display: none; }
     </style>
@@ -165,7 +138,8 @@
     const state = {
         activeChannel: 'R',
         isRunning: false,
-        autoMode: false, // New State
+        autoMode: false,
+        isLocked: false, // Lock found parameters
         staticImageData: null,
         results: { R: null, G: null, B: null },
         config: {
@@ -173,7 +147,9 @@
             G: { offset: 0, gain: 1.0, k1: 0.0, k2: 0.0, win: 8, sens: 0.15, neighbors: ['R', 'B'] },
             B: { offset: 0, gain: 1.0, k1: 0.0, k2: 0.0, win: 8, sens: 0.15, neighbors: ['R', 'G'] }
         },
-        ranges: { R: {}, G: {}, B: {} }
+        ranges: { R: {}, G: {}, B: {} },
+        // Search Loop Counters
+        time: 0 
     };
 
     // Initialize Range Storage
@@ -197,15 +173,18 @@
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.connect(gain); gain.connect(ctx.destination);
-            osc.frequency.value = 800; osc.type = 'square';
-            gain.gain.setValueAtTime(0.1, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.1);
-            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.1);
+            osc.frequency.value = 880; osc.type = 'sine';
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.15);
+            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.15);
         } catch(e) {}
     }
 
     function switchTab(ch) {
         state.activeChannel = ch;
+        state.isLocked = false; // Unlock on tab switch
+        document.getElementById('btn-auto').classList.remove('locked');
+        
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelector(`.tab.${ch.toLowerCase()}`).classList.add('active');
 
@@ -215,7 +194,6 @@
 
         loadParamsToUI(ch);
         updateRangeDisplay(ch);
-        if (state.staticImageData && !state.isRunning) processStaticImage();
     }
 
     function loadParamsToUI(ch) {
@@ -227,7 +205,7 @@
         document.getElementById('sl-win').value = conf.win;
         document.getElementById('sl-sens').value = conf.sens;
 
-        document.getElementById('val-offset').innerText = conf.offset;
+        document.getElementById('val-offset').innerText = Math.round(conf.offset);
         document.getElementById('val-gain').innerText = conf.gain.toFixed(2);
         document.getElementById('val-k1').innerText = conf.k1.toFixed(2);
         document.getElementById('val-k2').innerText = conf.k2.toFixed(2);
@@ -235,9 +213,8 @@
         document.getElementById('val-sens').innerText = conf.sens.toFixed(2);
     }
 
-    // New: Intercept manual slider input to disable AUTO
     function handleSliderInput(key, value) {
-        if (state.autoMode) toggleAuto(); // Safety: Turn off auto on manual interaction
+        if (state.autoMode) toggleAuto(); 
         updateParam(key, value);
     }
 
@@ -246,21 +223,17 @@
         let val = parseFloat(value);
         if (key === 'offset' || key === 'win') val = parseInt(value);
         state.config[ch][key] = val;
-
-        const displayEl = document.getElementById(`val-${key === 'sens' ? 'sens' : key}`);
-        if(key === 'win' || key === 'offset') displayEl.innerText = val;
-        else displayEl.innerText = val.toFixed(2);
-
-        if (state.staticImageData && !state.isRunning) processStaticImage();
+        updateUIDisplayParam(key, val);
+        
+        if (state.staticImageData && !state.isRunning && !state.autoMode) processStaticImage();
     }
 
-    // Update UI from state (used by Auto-calibration loop)
-    function updateUIFromState() {
-        const conf = state.config[state.activeChannel];
-        document.getElementById('sl-offset').value = conf.offset;
-        document.getElementById('sl-gain').value = conf.gain;
-        document.getElementById('val-offset').innerText = Math.round(conf.offset);
-        document.getElementById('val-gain').innerText = conf.gain.toFixed(2);
+    function updateUIDisplayParam(key, val) {
+        const displayEl = document.getElementById(`val-${key === 'sens' ? 'sens' : key}`);
+        const sliderEl = document.getElementById(`sl-${key === 'sens' ? 'sens' : key}`);
+        if(key === 'win' || key === 'offset') displayEl.innerText = val;
+        else displayEl.innerText = val.toFixed(2);
+        if(sliderEl) sliderEl.value = val;
     }
 
     function setLED(ch, status) {
@@ -298,9 +271,18 @@
 
     function toggleAuto() {
         state.autoMode = !state.autoMode;
+        state.isLocked = false;
+        state.time = 0;
         const btn = document.getElementById('btn-auto');
-        if (state.autoMode) btn.classList.add('active');
-        else btn.classList.remove('active');
+        
+        if (state.autoMode) {
+            btn.classList.add('active');
+            btn.classList.remove('locked');
+            if (!state.isRunning) requestAnimationFrame(processLoop);
+        } else {
+            btn.classList.remove('active');
+            btn.classList.remove('locked');
+        }
     }
 
     // === 2. FILE HANDLING ===
@@ -319,7 +301,8 @@
                 const sy = (img.height - size) / 2;
                 els.ctx.drawImage(img, sx, sy, size, size, 0, 0, 480, 480);
                 state.staticImageData = els.ctx.getImageData(0, 0, 480, 480);
-                processStaticImage();
+                state.isLocked = false;
+                if (!state.autoMode) processStaticImage();
             };
             img.src = e.target.result;
         };
@@ -353,131 +336,36 @@
         setLED(ch, false);
     }
 
-    // === 4. AUTO-CALIBRATION LOGIC ===
-    
-    function performAutoCalibration(buffer, location, w) {
-        // 1. Sample pixels inside the QR code bounding box
-        // We'll use the bounding box defined by the corners
-        const minX = Math.min(location.topLeftCorner.x, location.bottomLeftCorner.x, location.topRightCorner.x, location.bottomRightCorner.x);
-        const maxX = Math.max(location.topLeftCorner.x, location.bottomLeftCorner.x, location.topRightCorner.x, location.bottomRightCorner.x);
-        const minY = Math.min(location.topLeftCorner.y, location.bottomLeftCorner.y, location.topRightCorner.y, location.bottomRightCorner.y);
-        const maxY = Math.max(location.topLeftCorner.y, location.bottomLeftCorner.y, location.topRightCorner.y, location.bottomRightCorner.y);
+    // === 4. UNIFIED LOOP & AUTO SEARCH ===
 
-        let minVal = 255, maxVal = 0;
-        let step = 5; // Sample every 5 pixels for speed
-        
-        // Scan the inner area
-        for(let y = Math.floor(minY); y < maxY; y+=step) {
-            for(let x = Math.floor(minX); x < maxX; x+=step) {
-                // Simple point-in-polygon check could be added, but bounding box is usually fine for center sampling
-                const idx = (y * w + x);
-                const val = buffer[idx];
-                if (val < minVal) minVal = val;
-                if (val > maxVal) maxVal = val;
-            }
+    function processLoop() {
+        // 1. Data Source
+        let sourceData = null;
+        if (state.isRunning && els.video.readyState === els.video.HAVE_ENOUGH_DATA) {
+            if (els.canvas.width !== 480) { els.canvas.width = 480; els.canvas.height = 480; }
+            const size = Math.min(els.video.videoWidth, els.video.videoHeight);
+            const sx = (els.video.videoWidth - size) / 2;
+            const sy = (els.video.videoHeight - size) / 2;
+            els.ctx.drawImage(els.video, sx, sy, size, size, 0, 0, 480, 480);
+            sourceData = els.ctx.getImageData(0, 0, 480, 480);
+        } else if (state.staticImageData) {
+            sourceData = state.staticImageData;
         }
 
-        // 2. Adjust Parameters
-        // Target: Min (black modules) ~ 10, Max (white background) ~ 245
-        // We adjust Offset to move brightness, Gain to expand contrast.
-
-        const conf = state.config[state.activeChannel];
-        
-        // Offset Logic: Shift the whole range
-        // If minVal is too high (e.g., 50), we need to lower Offset to make it darker.
-        // If minVal is too low (clipped 0), maybe raise offset? 
-        // Target min ~ 20 to avoid crushing noise.
-        const targetMin = 20;
-        
-        if (minVal > targetMin + 15) {
-            conf.offset -= 1; // Make darker
-        } else if (minVal < targetMin - 15) {
-            conf.offset += 1; // Make lighter
-        }
-
-        // Gain Logic: Expand range
-        // If maxVal is low and minVal is high -> Low Contrast -> Increase Gain
-        const rangeSpan = maxVal - minVal;
-        
-        if (rangeSpan < 150) {
-            conf.gain += 0.02;
-        } else if (maxVal > 250 && minVal < 5) {
-            // Likely clipping/over-contrast, reduce gain slightly
-            conf.gain -= 0.02;
-        }
-
-        // Clamp values
-        conf.gain = Math.max(0.1, Math.min(5.0, conf.gain));
-        conf.offset = Math.max(-100, Math.min(100, conf.offset));
-
-        // Update UI Sliders to reflect changes
-        updateUIFromState();
-    }
-
-    function processStaticImage() {
-        if (!state.staticImageData) return;
-        const src = state.staticImageData;
-        const conf = state.config[state.activeChannel];
-        const w = 480, h = 480;
-        const currentData = new ImageData(new Uint8ClampedArray(src.data), w, h);
-        const processedBuffer = new Uint8ClampedArray(w * h);
-
-        // SCI
-        for (let i = 0; i < src.data.length; i += 4) {
-            let r = src.data[i], g = src.data[i+1], b = src.data[i+2];
-            let target, n1, n2;
-            if (state.activeChannel === 'R') { target = r; n1 = g; n2 = b; }
-            else if (state.activeChannel === 'G') { target = g; n1 = r; n2 = b; }
-            else { target = b; n1 = r; n2 = g; }
-            let res = (target - (n1 * conf.k1 + n2 * conf.k2)) * conf.gain + conf.offset;
-            res = Math.max(0, Math.min(255, res));
-            processedBuffer[i/4] = res;
-            currentData.data[i] = res; currentData.data[i+1] = res; currentData.data[i+2] = res; currentData.data[i+3] = 255;
-        }
-
-        // Bradley
-        applyBradley(processedBuffer, currentData, w, h, conf.win, conf.sens);
-        els.ctx.putImageData(currentData, 0, 0);
-
-        // Scan
-        const code = jsQR(currentData.data, w, h, { inversionAttempts: "attemptBoth" });
-        
-        if (code) {
-            handleDecodeSuccess(code.data, state.activeChannel);
-            drawOverlay(code.location);
-            
-            // AUTO CALIBRATION
-            if (state.autoMode) {
-                performAutoCalibration(processedBuffer, code.location, w);
-            }
-        } else {
-            handleDecodeFail(state.activeChannel);
-        }
-    }
-
-    function processFrame() {
-        if (!state.isRunning) return;
-        const video = els.video;
-        const canvas = els.canvas;
-        const ctx = els.ctx;
-
-        if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            if (canvas.width !== 480) { canvas.width = 480; canvas.height = 480; }
-            
-            const size = Math.min(video.videoWidth, video.videoHeight);
-            const sx = (video.videoWidth - size) / 2;
-            const sy = (video.videoHeight - size) / 2;
-            ctx.drawImage(video, sx, sy, size, size, 0, 0, 480, 480);
-
-            const imgData = ctx.getImageData(0, 0, 480, 480);
-            const src = imgData.data; 
-            const srcCopy = new Uint8ClampedArray(src);
-            const processedBuffer = new Uint8ClampedArray(480 * 480);
+        // 2. Process if data exists
+        if (sourceData) {
             const conf = state.config[state.activeChannel];
+            const w = 480, h = 480;
+            
+            let currentData;
+            if (state.isRunning) currentData = sourceData;
+            else currentData = new ImageData(new Uint8ClampedArray(sourceData.data), w, h);
+            
+            const processedBuffer = new Uint8ClampedArray(w * h);
 
-            // SCI
-            for (let i = 0; i < srcCopy.length; i += 4) {
-                let r = srcCopy[i], g = srcCopy[i+1], b = srcCopy[i+2];
+            // SCI Matrix
+            for (let i = 0; i < sourceData.data.length; i += 4) {
+                let r = sourceData.data[i], g = sourceData.data[i+1], b = sourceData.data[i+2];
                 let target, n1, n2;
                 if (state.activeChannel === 'R') { target = r; n1 = g; n2 = b; }
                 else if (state.activeChannel === 'G') { target = g; n1 = r; n2 = b; }
@@ -485,29 +373,74 @@
                 let res = (target - (n1 * conf.k1 + n2 * conf.k2)) * conf.gain + conf.offset;
                 res = Math.max(0, Math.min(255, res));
                 processedBuffer[i/4] = res;
-                src[i] = res; src[i+1] = res; src[i+2] = res; src[i+3] = 255;
+                currentData.data[i] = res; currentData.data[i+1] = res; currentData.data[i+2] = res; currentData.data[i+3] = 255;
             }
 
             // Bradley
-            applyBradley(processedBuffer, imgData, 480, 480, conf.win, conf.sens);
-            ctx.putImageData(imgData, 0, 0);
+            applyBradley(processedBuffer, currentData, w, h, conf.win, conf.sens);
+            els.ctx.putImageData(currentData, 0, 0);
 
-            // Scan
-            const code = jsQR(imgData.data, 480, 480, { inversionAttempts: "attemptBoth" });
+            // Scan (Inversion Attempt Both is CRITICAL here)
+            const code = jsQR(currentData.data, w, h, { inversionAttempts: "attemptBoth" });
             
             if (code) {
                 handleDecodeSuccess(code.data, state.activeChannel);
                 drawOverlay(code.location);
                 
-                // AUTO CALIBRATION
-                if (state.autoMode) {
-                    performAutoCalibration(processedBuffer, code.location, 480);
+                // LOCK SUCCESS
+                if(state.autoMode && !state.isLocked) {
+                    state.isLocked = true;
+                    document.getElementById('btn-auto').classList.add('locked');
                 }
             } else {
                 handleDecodeFail(state.activeChannel);
+                
+                // AUTO: INFINITE SEARCH (If not locked)
+                if (state.autoMode && !state.isLocked) {
+                    performActiveSearch();
+                }
             }
         }
-        requestAnimationFrame(processFrame);
+
+        // Continue loop
+        if (state.isRunning || state.autoMode) {
+            requestAnimationFrame(processLoop);
+        }
+    }
+
+    // ACTIVE SEARCH: Triangle Wave Oscillators with different frequencies
+    function performActiveSearch() {
+        state.time++;
+        const t = state.time;
+        const conf = state.config[state.activeChannel];
+
+        // Helper: Triangle wave (0 to 1 to 0)
+        // Returns value in range [min, max]
+        // Period: how many frames for one full cycle (up and down)
+        const triWave = (period, min, max) => {
+            let cycle = t % period;
+            let half = period / 2;
+            let pos = (cycle < half) ? cycle / half : (period - cycle) / half;
+            return min + pos * (max - min);
+        };
+
+        // 1. Gain Oscillator (FAST)
+        // Range: 1.0 to 4.0. Period ~120 frames (2 sec at 60fps)
+        conf.gain = triWave(120, 1.0, 4.0);
+
+        // 2. Offset Oscillator (MEDIUM)
+        // Range: -100 to 0. Period ~300 frames (5 sec)
+        // Logic: We want to shift brightness range
+        conf.offset = triWave(300, -100, 0);
+
+        // 3. Window Oscillator (SLOW)
+        // Range: 4 to 32. Period ~450 frames (7.5 sec)
+        conf.win = Math.round(triWave(450, 4, 32));
+
+        // Update UI to show the "Thinking"
+        updateUIDisplayParam('gain', conf.gain);
+        updateUIDisplayParam('offset', conf.offset);
+        updateUIDisplayParam('win', conf.win);
     }
 
     // === 5. ALGORITHMS ===
@@ -575,7 +508,7 @@
             els.video.play();
             state.isRunning = true;
             btn.innerText = "Стоп";
-            requestAnimationFrame(processFrame);
+            requestAnimationFrame(processLoop);
         } catch (e) { alert("Camera Error: " + e.message); }
     }
 
